@@ -1,0 +1,33 @@
+[
+  {
+    "catalog": "xueqiu",
+    "key": "duanyongping",
+    "duration_in_minutes": 3,
+    "url": [
+      "https://rsshub.pseudoyu.com/xueqiu/user/1247347556",
+      "https://rsshub.rssforever.com/xueqiu/user/1247347556",
+      "https://yangzhi.app/xueqiu/user/1247347556",
+      "https://rss.peachyjoy.top/xueqiu/user/1247347556"
+    ],
+    "receiver_name": [
+      "fred"
+    ],
+    "group_name": [
+      "雪球：大道无形我有型"
+    ]
+  },
+  {
+    "catalog": "zhihu",
+    "key": "yaodong",
+    "duration_in_minutes": 5,
+    "url": [
+      "https://rsshub.ktachibana.party/zhihu/people/activities/yao-dong-27",
+      "https://rss.owo.nz/zhihu/people/activities/yao-dong-27",
+      "https://rsshub.rssforever.com/zhihu/people/activities/yao-dong-27"
+    ],
+    "receiver_name": [],
+    "group_name": [
+      "知乎：姚冬"
+    ]
+  }
+]
