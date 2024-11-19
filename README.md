@@ -14,7 +14,7 @@
 ```json
 [
   {
-    "catalog": "xueqiu", # 类别，目前验证过xueqiu(雪球)与zhihu(知乎)
+    "catalog": "xueqiu", # 类别，目前验证过xueqiu(雪球)、zhihu(知乎)、weibo(微博)
     "key": "duanyongping", # 同类别下唯一
     "duration_in_minutes": 3, # 几分钟拉取一次
     "url": [ # RSS源，带fallback机制，会自动选择成功率最高的url

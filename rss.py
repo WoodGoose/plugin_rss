@@ -126,7 +126,7 @@ def parse_rss(rss_content):
 class Rss(Plugin):
     def __init__(self):
         super().__init__()
-        self.TAG = "RSS"
+        self.TAG = "[RSS]"
 
         try:
             self.config = super().load_config()
@@ -227,6 +227,12 @@ class Rss(Plugin):
         text = re.sub(r'<b>(.*?)</b>', r'**\1**', text)
         text = re.sub(r'<span class="nolink">(.*?)</span>', r'\1', text)
         text = text.replace(r'<figure data-size="normal"></figure>', "[图片]")
+
+        # for weibo
+        text = re.sub(r'<span class="url-icon">(.*?)</span>', r'\1', text)
+        text = re.sub(r'<img style="" src=".+" referrerpolicy="no-referrer">', "\n[图片]", text)
+        text = re.sub(r'<span class="surl-text">(.*?)</span>', r'\1', text)
+        text = re.sub(r'<a href="[^>]*">([^<]+)</a>', r'<\1>', text)
 
         pub_date = self.convert_to_east_eight_time(item['pub_date'])
         link = item['link']

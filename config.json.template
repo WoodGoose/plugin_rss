@@ -29,5 +29,19 @@
     "group_name": [
       "知乎：姚冬"
     ]
+  },
+  {
+    "catalog": "weibo",
+    "key": "leijun",
+    "duration_in_minutes": 5,
+    "url": [
+      "https://rsshub.app/weibo/user/1749127163",
+      "https://rsshub.pseudoyu.com/weibo/user/1749127163",
+      "https://rsshub.henry.wang/weibo/user/1749127163"
+    ],
+    "receiver_name": [],
+    "group_name": [
+      "微博：雷军"
+    ]
   }
 ]
