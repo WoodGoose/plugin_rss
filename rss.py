@@ -178,7 +178,7 @@ class Rss(Plugin):
     def rss_worker(self, rss_key, rss_catalog, urls, duration, receiver_name, group_name):
         while True:
             time.sleep(duration * 60)
-            logger.info(f"{self.TAG}fetching RSS for {rss_catalog}/{rss_key}...")
+            logger.info(f"{self.TAG}fetching RSS for {rss_key}...")
             rss_content = fetch_rss(urls)
             if rss_content:
                 items = parse_rss(rss_content)
