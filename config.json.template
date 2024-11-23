@@ -2,7 +2,7 @@
   {
     "catalog": "xueqiu",
     "key": "duanyongping",
-    "duration_in_minutes": 3,
+    "duration_in_minutes": 10,
     "url": [
       "https://rsshub.pseudoyu.com/xueqiu/user/1247347556",
       "https://rsshub.rssforever.com/xueqiu/user/1247347556",
@@ -19,7 +19,7 @@
   {
     "catalog": "zhihu",
     "key": "yaodong",
-    "duration_in_minutes": 5,
+    "duration_in_minutes": 30,
     "url": [
       "https://rsshub.ktachibana.party/zhihu/people/activities/yao-dong-27",
       "https://rss.owo.nz/zhihu/people/activities/yao-dong-27",
@@ -33,7 +33,7 @@
   {
     "catalog": "weibo",
     "key": "leijun",
-    "duration_in_minutes": 5,
+    "duration_in_minutes": 30,
     "url": [
       "https://rsshub.app/weibo/user/1749127163",
       "https://rsshub.pseudoyu.com/weibo/user/1749127163",

@@ -183,12 +183,29 @@ class Rss(Plugin):
             if rss_content:
                 items = parse_rss(rss_content)
                 new_items = get_new_items(items)
+                new_items = self.filter_old_items(new_items)
                 for item in reversed(new_items[-3:]): # no more than N new items every period
                     if self.handle_item(rss_catalog, item, receiver_name, group_name):
                         save_item_to_db(rss_key, item)
             else:
                 logger.warning(f"{self.TAG}fetch RSS fail for {rss_catalog}/{rss_key}")
     
+
+    # keep only the items from the last 3 days
+    def filter_old_items(self, items):
+        from datetime import datetime, timedelta
+
+        time_format = "%a, %d %b %Y %H:%M:%S GMT"
+
+        current_time = datetime.utcnow()
+
+        three_days_ago = current_time - timedelta(days=3)
+
+        filtered_items = [
+            item for item in items
+            if datetime.strptime(item["pub_date"], time_format) >= three_days_ago
+        ]
+        return filtered_items
 
     # todo: ensure send succcess
     def handle_item(self, rss_catalog, item, receiver_names, group_names):
@@ -204,40 +221,79 @@ class Rss(Plugin):
         text = ""
         if rss_catalog in ("zhihu", ):
             title = item['title']
-            text += f'**{title}**\n'
-        text += item['description']
-
-        text = text.replace("&nbsp;", " ")
-        text = text.replace("<br>", "\n")
-    
-        text = re.sub(r'<a href="[^>]*">([^<]+)</a>', r'<\1>', text)
-        
-        def format_blockquote(match):
-            content = match.group(1)
-            formatted_lines = ["> " + line.strip() for line in content.splitlines() if line.strip()]
-            return "\n" + "\n".join(formatted_lines)
-        
-        text = re.sub(r'<blockquote>(.*?)</blockquote>', format_blockquote, text, flags=re.DOTALL)
-        text = re.sub(r'<img[^>]*alt="([^"]+)"[^>]*>', r'\1', text)
-        text = re.sub(r'<strong>(.*?)</strong>', r'**\1**', text)
-
-        # for zhihu
-        text = re.sub(r'</p>(?=\S)', '</p>\n', text)
-        text = re.sub(r'<p data-pid=".*?">(.*?)</p>', r'\1', text)
-        text = re.sub(r'<b>(.*?)</b>', r'**\1**', text)
-        text = re.sub(r'<span class="nolink">(.*?)</span>', r'\1', text)
-        text = text.replace(r'<figure data-size="normal"></figure>', "[图片]")
-
-        # for weibo
-        text = re.sub(r'<span class="url-icon">(.*?)</span>', r'\1', text)
-        text = re.sub(r'<img style="" src=".+" referrerpolicy="no-referrer">', "\n[图片]", text)
-        text = re.sub(r'<span class="surl-text">(.*?)</span>', r'\1', text)
-        text = re.sub(r'<a href="[^>]*">([^<]+)</a>', r'<\1>', text)
+            text += title + "\n" + "-" * 30 + "\n"
+        text += self.format_html_text(item['description'])
 
         pub_date = self.convert_to_east_eight_time(item['pub_date'])
         link = item['link']
 
         return f"{text}\n\n{pub_date}\n{link}"
+
+    def format_html_text(self, text):
+        import re
+
+        # <img alt="[good]" src="https://h5.sinaimg.cn/m/emoticon/icon/others/h_good-0c51afc69c.png" style="width:1em; height:1em;" referrerpolicy="no-referrer">
+        text = re.sub(r'<img [^>]*alt="([^"]*)"[^>]*>', r"\1", text)
+        # <img style="" src="https://tvax2.sinaimg.cn/large/008AGV4Yly1hvw0lmxzvoj31401o0e82.jpg" referrerpolicy="no-referrer">
+        text = re.sub(
+            r'<\s*img\s+style=".*"\s*src=".+" referrerpolicy="no-referrer">',
+            "[图片]",
+            text,
+        )
+
+        # <a href="https://video.weibo.com/show?fid=1034:5103567598452769" data-hide="">小米社区的微博视频</a>
+        # <a href="https://m.weibo.cn/search?containerid=231522type%3D1%26t%3D10%26q%3D%23k80%23" data-hide=""><span class="surl-text">#k80#</span></a>
+        text = re.sub(r"<a [^>]*>(.+?)</a>", r"<\1>", text)
+
+        # <span class="url-icon">[作揖]</span>
+        # <span class="surl-text">小米社区的微博视频</span>
+        text = re.sub(r"<span [^>]*>(.+?)</span>", r"\1", text)
+
+        # <div style="clear: both"></div>
+        text = re.sub(r"<div [^>]*>(.*?)</div>", r"\1", text)
+
+        # <video controls="controls" poster="https://tvax1.sinaimg.cn/orj480/9c9b24f5ly1hvv5ri55etj21hc0u00ul.jpg" style="width: 100%"><source src="https://f.video.weibocdn.com/o0/D2SO3GsAlx08jN130MwM01041200r8670E010.mp4?label=mp4_720p&amp;template=1280x720.25.0&amp;ori=0&amp;ps=1Cx9YB1mmR49jS&amp;Expires=1732349608&amp;ssig=1yBb1QUH1I&amp;KID=unistore,video"><source src="https://f.video.weibocdn.com/o0/2V29C0v0lx08jN12EjtK01041200et0y0E010.mp4?label=mp4_hd&amp;template=852x480.25.0&amp;ori=0&amp;ps=1Cx9YB1mmR49jS&amp;Expires=1732349608&amp;ssig=f8U9ILZkZX&amp;KID=unistore,video"><source src="https://f.video.weibocdn.com/o0/JgZhVujslx08jN12RPRe010412009nXm0E010.mp4?label=mp4_ld&amp;template=640x360.25.0&amp;ori=0&amp;ps=1Cx9YB1mmR49jS&amp;Expires=1732349608&amp;ssig=7b9GZSv54O&amp;KID=unistore,video"><p>视频无法显示，请前往<微博视频>观看。</p></video>
+        text = re.sub(r"<source [^>]*>", "", text)
+        # <video controls="controls" poster="https://tvax1.sinaimg.cn/orj480/9c9b24f5ly1hvv5ri55etj21hc0u00ul.jpg" style="width: 100%"><p>视频无法显示，请前往<微博视频>观看。</p></video>
+        text = re.sub(r"<video [^>]*>(.+?)</video>", r"\1", text)
+
+        # <br clear="both">
+        # <br>
+        text = re.sub(r"<br [^>]*>", "\n", text)
+        text = re.sub(r"<br>", "\n", text)
+
+        # <p>视频无法显示，请前往<微博视频>观看。</p>
+        text = re.sub(r"<p>(.*?)</p>", r"\1\n", text)
+
+        # <sup data-text="在宇宙尺度下，奇数原子序数的元素丰度比偶数的要少，所以下列是以偶数原子序数原子为主" data-url="" data-draft-node="inline" data-draft-type="reference" data-numero="1">[1]</sup>
+        text = re.sub(r"<sup [^>]*>(.*?)</sup>", r"\1", text)
+
+        # <b>我原本以为保守派已经天下无敌，没想到还有高手，极端保守派！</b>
+        text = re.sub(r"<b>(.*?)</b>", r"**\1**", text)
+        text = re.sub(r"<strong>(.*?)</strong>", r"**\1**", text)
+
+        # <figure data-size="normal"></figure>
+        text = text.replace(r'<figure data-size="normal"></figure>', "[图片]")
+
+        # <h2>前情回顾：恒星的核聚变</h2>
+        text = re.sub(r"<h1>(.*?)</h1>", r"# \1\n", text)
+        text = re.sub(r"<h2>(.*?)</h2>", r"## \1\n", text)
+        text = re.sub(r"<h3>(.*?)</h3>", r"### \1\n", text)
+
+        def format_blockquote(match):
+            content = match.group(1)
+            formatted_lines = [
+                "> " + line.strip() for line in content.splitlines() if line.strip()
+            ]
+            return "\n" + "\n".join(formatted_lines)
+
+        text = re.sub(
+            r"<blockquote[^>]*>(.*?)</blockquote>", format_blockquote, text, flags=re.DOTALL
+        )
+
+        text = text.replace("&nbsp;", " ")
+
+        return text
 
     def convert_to_east_eight_time(self, gmt_time_str):
         from datetime import datetime, timedelta
