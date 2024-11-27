@@ -264,6 +264,8 @@ class Rss(Plugin):
 
         # <p>视频无法显示，请前往<微博视频>观看。</p>
         text = re.sub(r"<p>(.*?)</p>", r"\1\n", text)
+        # <p data-pid="rIQ5HAkA">老而不死是为贼</p >
+        text = re.sub(r"<p [^>]*>(.*?)</p>", r"\1\n", text)
 
         # <sup data-text="在宇宙尺度下，奇数原子序数的元素丰度比偶数的要少，所以下列是以偶数原子序数原子为主" data-url="" data-draft-node="inline" data-draft-type="reference" data-numero="1">[1]</sup>
         text = re.sub(r"<sup [^>]*>(.*?)</sup>", r"\1", text)
