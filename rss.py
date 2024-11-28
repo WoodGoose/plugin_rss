@@ -176,6 +176,7 @@ class Rss(Plugin):
         #     thread.join()
 
     def rss_worker(self, rss_key, rss_catalog, urls, duration, receiver_name, group_name):
+        logger.info(f"{self.TAG}{rss_key}, {rss_catalog}, {duration}min, {receiver_name}, {group_name}")
         while True:
             time.sleep(duration * 60)
             logger.info(f"{self.TAG}fetching RSS for {rss_key}...")
@@ -219,7 +220,7 @@ class Rss(Plugin):
     def format_item(self, rss_catalog, item):
         import re
         text = ""
-        if rss_catalog in ("zhihu", ):
+        if rss_catalog not in ("xueqiu", "weibo"):
             title = item['title']
             text += title + "\n" + "-" * 30 + "\n"
         text += self.format_html_text(item['description'])

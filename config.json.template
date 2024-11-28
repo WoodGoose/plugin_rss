@@ -2,7 +2,7 @@
   {
     "catalog": "xueqiu",
     "key": "duanyongping",
-    "duration_in_minutes": 10,
+    "duration_in_minutes": 60,
     "url": [
       "https://rsshub.pseudoyu.com/xueqiu/user/1247347556",
       "https://rsshub.rssforever.com/xueqiu/user/1247347556",
@@ -42,6 +42,28 @@
     "receiver_name": [],
     "group_name": [
       "微博：雷军"
+    ]
+  },
+  {
+    "catalog": "aibase",
+    "key": "news",
+    "duration_in_minutes": 30,
+    "url": [
+      "https://rsshub.rssforever.com/aibase/news",
+      "https://hub.slarker.me/aibase/news",
+      "https://rsshub.pseudoyu.com/aibase/news",
+      "https://rsshub.ktachibana.party/aibase/news",
+      "https://rsshub.woodland.cafe/aibase/news",
+      "https://rss.owo.nz/aibase/news",
+      "https://yangzhi.app/aibase/news",
+      "https://rsshub.henry.wang/aibase/news",
+      "https://rsshub.speednet.icu/aibase/news",
+      "https://hub.rss.direct/aibase/news",
+      "https://rsshub.umzzz.com/aibase/news"
+    ],
+    "receiver_name": [],
+    "group_name": [
+      "aibase：AI新闻资讯"
     ]
   }
 ]
